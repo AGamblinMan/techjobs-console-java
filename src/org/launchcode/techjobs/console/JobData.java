@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -42,6 +43,7 @@ public class JobData {
                 values.add(aValue);
             }
         }
+        Collections.sort(values);
 
         return values;
     }
@@ -51,7 +53,9 @@ public class JobData {
         // load data, if not already loaded
         loadData();
 
-        return allJobs;
+        ArrayList<HashMap<String,String>> jobs = new ArrayList(allJobs);
+
+        return jobs;
     }
 
     /**
@@ -74,10 +78,39 @@ public class JobData {
 
         for (HashMap<String, String> row : allJobs) {
 
-            String aValue = row.get(column);
+            String aValue = row.get(column).toLowerCase();
 
             if (aValue.contains(value)) {
                 jobs.add(row);
+            }
+        }
+
+        return jobs;
+    }
+
+    public static ArrayList<HashMap<String, String>> findByValue(String value) {
+
+        //load data, if not there already
+        loadData();
+
+        ArrayList<HashMap<String, String>> jobs = new ArrayList<>();
+
+
+        // for each job in the data
+        for (HashMap<String, String> job : allJobs){
+
+            boolean aMatch = false;
+            // for each field in the job
+            for (String field : job.keySet()){
+                String aField = job.get(field).toLowerCase();
+                // if a field matches, set aMatch to true
+                if (aField.contains(value)){
+                    aMatch = true;
+                }
+            }
+            // checking a boolean ensures each job only added ONCE
+            if (aMatch){
+                jobs.add(job);
             }
         }
 
