@@ -3,6 +3,7 @@ package org.launchcode.techjobs.console;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -78,9 +79,9 @@ public class JobData {
 
         for (HashMap<String, String> row : allJobs) {
 
-            String aValue = row.get(column).toLowerCase();
+            String aValue = row.get(column);
 
-            if (aValue.contains(value)) {
+            if (StringUtils.containsIgnoreCase(aValue,value)) {
                 jobs.add(row);
             }
         }
@@ -99,21 +100,16 @@ public class JobData {
         // for each job in the data
         for (HashMap<String, String> job : allJobs){
 
-            boolean aMatch = false;
+
             // for each field in the job
-            for (String field : job.keySet()){
-                String aField = job.get(field).toLowerCase();
-                // if a field matches, set aMatch to true
-                if (aField.contains(value)){
-                    aMatch = true;
+            for (String field : job.values()){
+                // if a field matches, add the job and break the loop
+                if (StringUtils.containsIgnoreCase(field,value)){
+                    jobs.add(job);
+                    break;
                 }
             }
-            // checking a boolean ensures each job only added ONCE
-            if (aMatch){
-                jobs.add(job);
-            }
         }
-
         return jobs;
     }
 
